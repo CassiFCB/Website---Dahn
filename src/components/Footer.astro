@@ -1,0 +1,60 @@
+---
+import { t } from '../i18n/ui';
+import { routeUrl, type Lang } from '../i18n/routes';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container inner">
+    <p class="copy">© {year} {profile.name}. {s.footer.rights}</p>
+    <ul class="links">
+      <li><a href={profile.linkedin} rel="noopener" target="_blank">LinkedIn</a></li>
+      <li><a href={routeUrl('legal', lang)}>{s.footer.legal}</a></li>
+      <li><a href={routeUrl('privacy', lang)}>{s.footer.privacy}</a></li>
+      <li><a href="#main">{s.footer.top} ↑</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg-soft);
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding-block: 28px;
+  }
+  .copy {
+    margin: 0;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .links a {
+    color: var(--text-muted);
+    display: inline-block;
+    padding: 6px 0;
+  }
+  .links a:hover {
+    color: var(--accent-strong);
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/source-serif-4/600.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { t } from '../i18n/ui';
+import { url, type Lang } from '../i18n/routes';
+import { profile } from '../data/profile';
+import ogImage from '../assets/portrait.jpg';
+import { getImage } from 'astro:assets';
+
+interface Props {
+  lang: Lang;
+  /** Pfade dieser Seite je Sprache (ohne Base), z. B. { de: 'de/', en: 'en/' } */
+  alternates: Record<Lang, string>;
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  /** true auf der Startseite: Navigation springt zu Ankern */
+  isHome?: boolean;
+}
+
+const { lang, alternates, title, description, noindex = false, isHome = false } = Astro.props;
+const s = t(lang);
+const pageTitle = title ? `${title} | ${profile.name}` : s.meta.title;
+const pageDescription = description ?? s.meta.description;
+const site = Astro.site ?? new URL('https://example.com');
+const abs = (p: string) => new URL(url(p), site).href;
+const canonical = abs(alternates[lang]);
+const og = await getImage({ src: ogImage, width: 381, format: 'jpg' });
+const ogUrl = new URL(og.src, site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: abs(alternates[lang]),
+  image: ogUrl,
+  jobTitle: lang === 'de' ? 'International Business (B.A.)' : 'International Business graduate (B.A.)',
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Karlshochschule International University' },
+  address: { '@type': 'PostalAddress', addressLocality: profile.location, addressCountry: 'DE' },
+  knowsLanguage: ['de', 'en', 'fr', 'es'],
+  sameAs: [profile.linkedin],
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="de" href={abs(alternates.de)} />
+    <link rel="alternate" hreflang="en" href={abs(alternates.en)} />
+    <link rel="alternate" hreflang="x-default" href={abs(alternates.de)} />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#1b2a41" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:locale" content={lang === 'de' ? 'de_DE' : 'en_US'} />
+    <meta name="twitter:card" content="summary" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{s.skipLink}</a>
+    <Header lang={lang} alternates={alternates} isHome={isHome} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

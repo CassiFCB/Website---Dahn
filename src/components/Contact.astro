@@ -1,0 +1,272 @@
+---
+import { t } from '../i18n/ui';
+import { routeUrl, url, type Lang } from '../i18n/routes';
+import { profile, isFormConfigured } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang).contact;
+const f = s.form;
+const site = Astro.site ?? new URL('https://example.com');
+const redirect = new URL(routeUrl('thanks', lang), site).href;
+---
+
+<section id="kontakt" class="section" aria-labelledby="contact-title">
+  <div class="container grid">
+    <div class="intro">
+      <span class="kicker">{s.kicker}</span>
+      <h2 id="contact-title">{s.title}</h2>
+      <p class="muted">{s.intro}</p>
+
+      <h3>{s.directTitle}</h3>
+      <dl class="direct">
+        <div>
+          <dt>{s.emailLabel}</dt>
+          <dd><a href={`mailto:${profile.email}`}>{profile.email}</a></dd>
+        </div>
+        <div>
+          <dt>{s.linkedinLabel}</dt>
+          <dd><a href={profile.linkedin} rel="noopener" target="_blank">linkedin.com/in/cassian-dahn</a></dd>
+        </div>
+        <div>
+          <dt>{s.cvLabel}</dt>
+          <dd><a href={url(profile.cvPath)} download>{s.cvLink}</a></dd>
+        </div>
+      </dl>
+    </div>
+
+    <form
+      class="card form"
+      action="https://api.web3forms.com/submit"
+      method="POST"
+      data-configured={isFormConfigured ? 'true' : 'false'}
+      data-msg-sending={f.sending}
+      data-msg-success={f.success}
+      data-msg-error={f.error}
+      data-msg-not-configured={f.notConfigured}
+    >
+      <input type="hidden" name="access_key" value={profile.web3formsKey} />
+      <input type="hidden" name="subject" value={f.subject} />
+      <input type="hidden" name="from_name" value="Portfolio-Website" />
+      <input type="hidden" name="redirect" value={redirect} />
+      <!-- Honeypot gegen Spam-Bots: für Menschen unsichtbar -->
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+      <div class="row">
+        <div class="field">
+          <label for="cf-name">{f.name} <span class="req" aria-hidden="true">*</span></label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="120" />
+        </div>
+        <div class="field">
+          <label for="cf-email">{f.email} <span class="req" aria-hidden="true">*</span></label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="200" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="cf-company">{f.company}</label>
+        <input id="cf-company" name="company" type="text" autocomplete="organization" maxlength="160" />
+      </div>
+      <div class="field">
+        <label for="cf-message">{f.message} <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="cf-message" name="message" rows="6" required maxlength="5000"></textarea>
+      </div>
+      <div class="consent">
+        <input id="cf-consent" name="consent" type="checkbox" required />
+        <label for="cf-consent">
+          {f.consentBefore}<a href={routeUrl('privacy', lang)} target="_blank">{f.consentLink}</a>{f.consentAfter}
+          <span class="req" aria-hidden="true">*</span>
+        </label>
+      </div>
+
+      <button class="btn btn--primary submit" type="submit">{f.submit}</button>
+      <p class="status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form.form').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('.status')!;
+    const button = form.querySelector<HTMLButtonElement>('.submit')!;
+    const label = button.textContent;
+    const msg = form.dataset;
+
+    const show = (text: string, kind: 'info' | 'success' | 'error') => {
+      status.textContent = text;
+      status.dataset.kind = kind;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      if (msg.configured !== 'true') {
+        show(msg.msgNotConfigured ?? '', 'error');
+        return;
+      }
+
+      const data = Object.fromEntries(new FormData(form));
+      delete data.redirect;
+      delete data.consent;
+      button.disabled = true;
+      button.textContent = msg.msgSending ?? '';
+      show('', 'info');
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.ok && result.success) {
+          form.reset();
+          show(msg.msgSuccess ?? '', 'success');
+        } else {
+          show(msg.msgError ?? '', 'error');
+        }
+      } catch {
+        show(msg.msgError ?? '', 'error');
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
+  });
+</script>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: clamp(32px, 6vw, 72px);
+    align-items: start;
+  }
+  .intro h3 {
+    margin-top: 32px;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .direct {
+    margin: 0;
+  }
+  .direct div {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .direct dt {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .direct dd {
+    margin: 0;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .form {
+    padding: clamp(22px, 4vw, 36px);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  label {
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+  .req {
+    color: var(--accent-strong);
+  }
+  input[type='text'],
+  input[type='email'],
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.15s ease;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+    border-color: var(--focus);
+  }
+  .consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 22px;
+  }
+  .consent input {
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+    accent-color: var(--navy-700);
+  }
+  .consent label {
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .submit {
+    width: 100%;
+  }
+  .submit:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .status {
+    margin: 14px 0 0;
+    font-weight: 500;
+  }
+  .status:empty {
+    display: none;
+  }
+  .status[data-kind='success'] {
+    color: var(--success);
+  }
+  .status[data-kind='error'] {
+    color: var(--error);
+  }
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+</style>

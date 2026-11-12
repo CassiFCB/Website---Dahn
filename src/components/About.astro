@@ -1,0 +1,60 @@
+---
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang).about;
+---
+
+<section id="profil" class="section section--soft" aria-labelledby="about-title">
+  <div class="container grid">
+    <div>
+      <span class="kicker">{s.kicker}</span>
+      <h2 id="about-title">{s.title}</h2>
+    </div>
+    <div class="text">
+      {s.paragraphs.map((p) => <p>{p}</p>)}
+      <div class="targets card">
+        <h3>{s.targetTitle}</h3>
+        <ul class="tag-list">
+          {s.targets.map((target) => <li class="tag target">{target}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: clamp(24px, 6vw, 80px);
+  }
+  .text p {
+    font-size: 1.08rem;
+  }
+  .targets {
+    margin-top: 32px;
+    padding: 24px;
+  }
+  .targets h3 {
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+  }
+  .target {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--surface);
+    border-color: var(--accent);
+    padding: 6px 14px;
+  }
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

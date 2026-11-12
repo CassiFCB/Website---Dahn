@@ -1,0 +1,127 @@
+---
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang).skills;
+---
+
+<section id="kompetenzen" class="section" aria-labelledby="skills-title">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">{s.kicker}</span>
+      <h2 id="skills-title">{s.title}</h2>
+    </div>
+
+    <div class="pillars">
+      {
+        s.pillars.map((pillar, i) => (
+          <article class="card pillar">
+            <span class="num" aria-hidden="true">0{i + 1}</span>
+            <h3>{pillar.title}</h3>
+            <ul>
+              {pillar.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+
+    <h3 class="tools-title">{s.toolsTitle}</h3>
+    <dl class="tools">
+      {
+        s.tools.map((group) => (
+          <div class="tool-group">
+            <dt>{group.group}</dt>
+            <dd>
+              <ul class="tag-list">
+                {group.items.map((item) => <li class="tag">{item}</li>)}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .pillar {
+    padding: clamp(24px, 4vw, 36px);
+    border-top: 3px solid var(--accent);
+  }
+  .num {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--accent-strong);
+    font-weight: 600;
+  }
+  .pillar h3 {
+    font-size: 1.5rem;
+    margin-top: 6px;
+  }
+  .pillar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .pillar li {
+    position: relative;
+    padding: 10px 0 10px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pillar li:last-child {
+    border-bottom: 0;
+  }
+  .pillar li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 19px;
+    width: 12px;
+    height: 7px;
+    border-left: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(-45deg);
+  }
+  .tools-title {
+    margin-top: clamp(40px, 6vw, 64px);
+    font-size: 1.25rem;
+  }
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    margin: 16px 0 0;
+  }
+  .tools dt {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .tools dd {
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .tools {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 680px) {
+    .pillars,
+    .tools {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

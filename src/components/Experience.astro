@@ -1,0 +1,143 @@
+---
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/routes';
+import { getLocalized } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang).experience;
+const items = await getLocalized('experience', lang);
+---
+
+<section id="erfahrung" class="section section--soft" aria-labelledby="exp-title">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">{s.kicker}</span>
+      <h2 id="exp-title">{s.title}</h2>
+    </div>
+
+    <ol class="timeline">
+      {
+        items.map(({ data }) => (
+          <li class="entry">
+            <div class="meta">
+              <span class="period">{data.period}</span>
+              <span class="location">{data.location}</span>
+            </div>
+            <div class="card body">
+              <h3>{data.role}</h3>
+              <p class="company">{data.company}</p>
+              <ul class="highlights">
+                {data.highlights.map((h) => <li>{h}</li>)}
+              </ul>
+              {data.tags.length > 0 && (
+                <ul class="tag-list">
+                  {data.tags.map((tag) => <li class="tag">{tag}</li>)}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .entry {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 32px;
+    position: relative;
+    padding-bottom: 28px;
+  }
+  .entry::before {
+    content: '';
+    position: absolute;
+    left: 196px;
+    top: 28px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--border);
+  }
+  .entry:last-child::before {
+    display: none;
+  }
+  .entry::after {
+    content: '';
+    position: absolute;
+    left: 191px;
+    top: 24px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 2px solid var(--accent);
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    padding-top: 18px;
+    text-align: right;
+  }
+  .period {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .location {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .body {
+    margin-left: 16px;
+    padding: 22px 26px;
+  }
+  .body h3 {
+    margin-bottom: 2px;
+  }
+  .company {
+    color: var(--accent-strong);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .highlights {
+    margin: 0 0 16px;
+  }
+  .highlights li {
+    margin-bottom: 6px;
+  }
+  @media (max-width: 760px) {
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding-left: 24px;
+    }
+    .entry::before {
+      left: 5px;
+      top: 8px;
+    }
+    .entry::after {
+      left: 0;
+      top: 6px;
+    }
+    .meta {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      text-align: left;
+      padding-top: 0;
+    }
+    .body {
+      margin-left: 0;
+      padding: 20px;
+    }
+  }
+</style>

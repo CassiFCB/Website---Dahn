@@ -1,0 +1,50 @@
+---
+import SimplePage from '../../components/SimplePage.astro';
+import { routes } from '../../i18n/routes';
+import { profile } from '../../data/profile';
+---
+
+<SimplePage lang="de" alternates={routes.legal} title="Impressum">
+  <h1>Impressum</h1>
+
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <address>
+    {profile.name}<br />
+    {profile.address.street}<br />
+    {profile.address.zipCity}<br />
+    Deutschland
+  </address>
+
+  <h2>Kontakt</h2>
+  <p>
+    E-Mail: <a href={`mailto:${profile.email}`}>{profile.email}</a><br />
+    Alternativ über das Kontaktformular auf dieser Website.
+  </p>
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <p>
+    {profile.name}<br />
+    Anschrift wie oben
+  </p>
+
+  <h2>Haftung für Inhalte</h2>
+  <p>
+    Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität
+    der Inhalte kann ich jedoch keine Gewähr übernehmen. Als Diensteanbieter bin ich gemäß § 7 Abs. 1 DDG für eigene
+    Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich.
+  </p>
+
+  <h2>Haftung für Links</h2>
+  <p>
+    Diese Website enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Für diese
+    fremden Inhalte ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Zum Zeitpunkt der
+    Verlinkung waren keine Rechtsverstöße erkennbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links
+    umgehend entfernen.
+  </p>
+
+  <h2>Urheberrecht</h2>
+  <p>
+    Die Inhalte und Bilder auf dieser Website unterliegen dem deutschen Urheberrecht. Eine Vervielfältigung,
+    Bearbeitung oder Verbreitung außerhalb der Grenzen des Urheberrechts bedarf der vorherigen schriftlichen Zustimmung.
+  </p>
+</SimplePage>

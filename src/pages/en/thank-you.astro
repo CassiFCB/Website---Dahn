@@ -1,0 +1,12 @@
+---
+import SimplePage from '../../components/SimplePage.astro';
+import { routes, routeUrl } from '../../i18n/routes';
+import { t } from '../../i18n/ui';
+const s = t('en').thanks;
+---
+
+<SimplePage lang="en" alternates={routes.thanks} title={s.title} noindex>
+  <h1>{s.title}</h1>
+  <p>{s.text}</p>
+  <p><a class="btn btn--primary" href={routeUrl('home', 'en')}>{s.back}</a></p>
+</SimplePage>

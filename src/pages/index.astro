@@ -1,0 +1,26 @@
+---
+import { routeUrl } from '../i18n/routes';
+const target = routeUrl('home', 'de');
+const targetEn = routeUrl('home', 'en');
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cassian Dahn</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href={target} />
+    <script is:inline define:vars={{ target, targetEn }}>
+      var prefersEn = (navigator.languages || [navigator.language || '']).every(function (l) {
+        return !/^de\b/i.test(l);
+      });
+      location.replace(prefersEn ? targetEn : target);
+    </script>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+  </head>
+  <body>
+    <p><a href={target}>Deutsch</a> · <a href={targetEn}>English</a></p>
+  </body>
+</html>

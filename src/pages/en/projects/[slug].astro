@@ -1,0 +1,12 @@
+---
+import CaseStudyPage from '../../../components/CaseStudyPage.astro';
+import { getLocalized, slugOf } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const entries = await getLocalized('projects', 'en');
+  return entries.map((entry) => ({ params: { slug: slugOf(entry.id) }, props: { entry } }));
+}
+const { entry } = Astro.props;
+---
+
+<CaseStudyPage lang="en" entry={entry} />

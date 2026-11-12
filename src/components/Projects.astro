@@ -1,0 +1,124 @@
+---
+import { t } from '../i18n/ui';
+import { projectUrl, type Lang } from '../i18n/routes';
+import { getLocalized, slugOf } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang).projects;
+const items = await getLocalized('projects', lang);
+---
+
+<section id="projekte" class="section" aria-labelledby="proj-title">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">{s.kicker}</span>
+      <h2 id="proj-title">{s.title}</h2>
+      <p>{s.intro}</p>
+    </div>
+
+    <ul class="grid">
+      {
+        items.map(({ id, data }) => (
+          <li class="card project">
+            <p class="context">
+              {data.context} · {data.period}
+            </p>
+            <h3>
+              <a href={projectUrl(lang, slugOf(id))}>{data.title}</a>
+            </h3>
+            <p class="summary">{data.summary}</p>
+            <div class="result">
+              <span class="result-label">{s.result}</span>
+              <p>{data.result}</p>
+            </div>
+            <ul class="tag-list">
+              {data.tags.map((tag) => <li class="tag">{tag}</li>)}
+            </ul>
+            <span class="more" aria-hidden="true">
+              {s.more} →
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .project {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(22px, 3.5vw, 32px);
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+  .project:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .project:focus-within {
+    border-color: var(--accent);
+  }
+  .context {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  /* ganze Karte klickbar, Link bleibt semantisch im Titel */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+  .summary {
+    color: var(--text-muted);
+  }
+  .result {
+    border-left: 3px solid var(--accent);
+    padding: 2px 0 2px 14px;
+    margin-bottom: 18px;
+  }
+  .result-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .result p {
+    margin: 2px 0 0;
+    font-size: 0.97rem;
+  }
+  .tag-list {
+    margin-top: auto;
+  }
+  .more {
+    margin-top: 18px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--link);
+  }
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

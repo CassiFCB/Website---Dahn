@@ -1,0 +1,16 @@
+---
+import SimplePage from '../components/SimplePage.astro';
+import { routes, routeUrl } from '../i18n/routes';
+import { t } from '../i18n/ui';
+const de = t('de').notFound;
+const en = t('en').notFound;
+---
+
+<SimplePage lang="de" alternates={routes.home} title={de.title} noindex>
+  <span class="kicker">404</span>
+  <h1>{de.title}</h1>
+  <p>{de.text}</p>
+  <p><a class="btn btn--primary" href={routeUrl('home', 'de')}>{de.back}</a></p>
+  <hr />
+  <p lang="en" class="muted">{en.text} <a href={routeUrl('home', 'en')}>{en.back}</a></p>
+</SimplePage>

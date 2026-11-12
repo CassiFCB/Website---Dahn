@@ -1,0 +1,235 @@
+---
+import { t } from '../i18n/ui';
+import { nav, routeUrl, url, type Lang } from '../i18n/routes';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+  alternates: Record<Lang, string>;
+  isHome: boolean;
+}
+const { lang, alternates, isHome } = Astro.props;
+const s = t(lang);
+const other: Lang = lang === 'de' ? 'en' : 'de';
+const home = routeUrl('home', lang);
+const items = nav.map((item) => ({
+  label: item.label[lang],
+  href: item.href ? url(item.href[lang]) : `${isHome ? '' : home}#${item.anchor}`,
+}));
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={home}>
+      <span class="brand-mark" aria-hidden="true">CD</span>
+      <span class="brand-name">{profile.name}</span>
+    </a>
+
+    <nav aria-label={lang === 'de' ? 'Hauptnavigation' : 'Main navigation'}>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
+        <span class="menu-icon" aria-hidden="true"></span>
+        <span class="menu-label">{s.menu}</span>
+      </button>
+      <ul id="site-menu" class="menu">
+        {items.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+        <li class="lang">
+          <a href={url(alternates[other])} hreflang={other} lang={other} title={s.langSwitch}>
+            <span class="sr-only">{s.langSwitch}: </span>
+            <span aria-hidden="true" class="lang-current">{lang.toUpperCase()}</span>
+            <span aria-hidden="true" class="lang-sep">/</span>
+            <span aria-hidden="true">{other.toUpperCase()}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const menu = document.getElementById('site-menu');
+  if (toggle && menu) {
+    const close = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('open');
+    };
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.classList.toggle('open', open);
+    });
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--header-bg);
+    backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 68px;
+    gap: 16px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #1b2a41;
+    color: #d1b07a;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+  .menu {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+  }
+  .menu a:hover {
+    color: var(--accent-strong);
+  }
+  .lang a {
+    gap: 4px;
+    margin-left: 8px;
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .lang-current {
+    color: var(--text);
+  }
+  .lang-sep {
+    opacity: 0.5;
+  }
+  .menu-toggle {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .menu-icon,
+    .menu-icon::before,
+    .menu-icon::after {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+    .menu-icon::before,
+    .menu-icon::after {
+      content: '';
+      position: absolute;
+      left: 0;
+    }
+    .menu-icon::before {
+      top: -6px;
+    }
+    .menu-icon::after {
+      top: 6px;
+    }
+    .menu-toggle[aria-expanded='true'] .menu-icon {
+      background: transparent;
+    }
+    .menu-toggle[aria-expanded='true'] .menu-icon::before {
+      transform: translateY(6px) rotate(45deg);
+    }
+    .menu-toggle[aria-expanded='true'] .menu-icon::after {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+    .menu {
+      display: none;
+      position: absolute;
+      top: 68px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 8px var(--gutter) 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .menu.open {
+      display: flex;
+    }
+    .menu a {
+      display: flex;
+      min-height: 48px;
+      padding: 0 4px;
+      font-size: 1.05rem;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+    }
+    .lang a {
+      display: inline-flex;
+      margin: 16px 0 0;
+      align-self: flex-start;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+  }
+  @media (max-width: 380px) {
+    .brand-name {
+      display: none;
+    }
+  }
+</style>

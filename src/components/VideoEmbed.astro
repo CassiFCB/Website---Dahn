@@ -1,0 +1,84 @@
+---
+/**
+ * Datenschutzfreundliches Video-Embed (z. B. für einen späteren UGC-Bereich).
+ * Das externe Video wird erst nach Klick geladen – vorher werden keine Daten übertragen.
+ *
+ * Beispiel:
+ * <VideoEmbed lang="de" src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
+ *   title="UGC-Beispiel: Produktvorstellung" provider="YouTube" ratio="9/16" />
+ */
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+  src: string;
+  title: string;
+  provider: string;
+  /** Seitenverhältnis, z. B. "16/9" oder "9/16" für Hochkant-Videos */
+  ratio?: string;
+}
+const { lang, src, title, provider, ratio = '16/9' } = Astro.props;
+const s = t(lang).video;
+---
+
+<figure class="video" style={`aspect-ratio: ${ratio}`} data-src={src} data-title={title}>
+  <div class="placeholder">
+    <p class="title">{title}</p>
+    <p class="notice">{s.notice.replace('{provider}', provider)}</p>
+    <button type="button" class="btn btn--primary">▶ {s.button}</button>
+  </div>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('figure.video').forEach((fig) => {
+    fig.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = fig.dataset.src ?? '';
+      iframe.title = fig.dataset.title ?? '';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.loading = 'lazy';
+      fig.replaceChildren(iframe);
+    });
+  });
+</script>
+
+<style>
+  .video {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #1b2a41;
+    color: #fff;
+  }
+  .video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px;
+    text-align: center;
+  }
+  .title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .notice {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    max-width: 36ch;
+  }
+</style>

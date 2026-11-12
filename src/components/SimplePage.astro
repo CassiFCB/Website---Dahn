@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import type { Lang } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+  alternates: Record<Lang, string>;
+  title: string;
+  noindex?: boolean;
+}
+const { lang, alternates, title, noindex } = Astro.props;
+---
+
+<BaseLayout lang={lang} alternates={alternates} title={title} noindex={noindex}>
+  <div class="section">
+    <div class="container prose">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>

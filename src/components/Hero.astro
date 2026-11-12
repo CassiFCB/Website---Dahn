@@ -1,0 +1,191 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/portrait.jpg';
+import { t } from '../i18n/ui';
+import { url, type Lang } from '../i18n/routes';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container grid">
+    <div class="copy">
+      <span class="kicker">{s.hero.eyebrow}</span>
+      <h1 id="hero-title">{profile.name}</h1>
+      <p class="lead">{s.hero.lead}</p>
+      <p class="sub">{s.hero.sub}</p>
+      <p class="availability">
+        <span class="dot" aria-hidden="true"></span>
+        {s.hero.availability}
+      </p>
+      <div class="ctas">
+        <a class="btn btn--primary" href="#kontakt">{s.hero.ctaContact}</a>
+        <a class="btn btn--ghost" href={url(profile.cvPath)} download>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          {s.hero.ctaCv}
+        </a>
+      </div>
+    </div>
+    <div class="photo-wrap">
+      <Image
+        src={portrait}
+        alt={s.hero.photoAlt}
+        widths={[240, 381]}
+        sizes="(max-width: 860px) 240px, 340px"
+        loading="eager"
+        fetchpriority="high"
+        class="photo"
+      />
+    </div>
+  </div>
+
+  <div class="container">
+    <ul class="stats">
+      {
+        s.stats.map((stat) => (
+          <li>
+            <span class="value">{stat.value}</span>
+            <span class="label">{stat.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(48px, 8vw, 96px) clamp(48px, 7vw, 80px);
+    background:
+      radial-gradient(1200px 400px at 85% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      var(--bg);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(32px, 6vw, 80px);
+  }
+  h1 {
+    margin-bottom: 0.35em;
+  }
+  .lead {
+    font-family: var(--font-serif);
+    font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+    line-height: 1.45;
+    color: var(--navy);
+    max-width: 34ch;
+  }
+  .sub {
+    color: var(--text-muted);
+    max-width: 60ch;
+  }
+  .availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-weight: 500;
+    background: var(--surface);
+  }
+  .dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 20%, transparent);
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .photo-wrap {
+    position: relative;
+  }
+  .photo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 14px -14px -14px 14px;
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+  }
+  .photo {
+    position: relative;
+    width: 340px;
+    aspect-ratio: 381 / 476;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    margin: clamp(48px, 7vw, 80px) 0 0;
+    border-top: 1px solid var(--border);
+  }
+  .stats li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px 20px 0 0;
+  }
+  .stats li + li {
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+  }
+  .value {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+  .label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .photo-wrap {
+      order: -1;
+      justify-self: start;
+    }
+    .photo {
+      width: 200px;
+    }
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stats li,
+    .stats li + li {
+      padding: 20px 12px 20px 0;
+      border-left: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats li:nth-child(even) {
+      padding-left: 16px;
+      border-left: 1px solid var(--border);
+    }
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/ui';
+import { routes, routeUrl, type Lang } from '../i18n/routes';
+import { slugOf } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'projects'>;
+}
+const { lang, entry } = Astro.props;
+const s = t(lang).projects;
+const d = entry.data;
+const slug = slugOf(entry.id);
+const alternates = { de: `${routes.projects.de}${slug}/`, en: `${routes.projects.en}${slug}/` };
+const { Content } = await render(entry);
+---
+
+<BaseLayout lang={lang} alternates={alternates} title={d.title} description={d.summary}>
+  <article class="section">
+    <div class="container narrow">
+      <a class="back" href={routeUrl('home', lang, '#projekte')}>← {s.back}</a>
+      <span class="kicker">{d.context} · {d.period}</span>
+      <h1>{d.title}</h1>
+      <p class="summary">{d.summary}</p>
+      <ul class="tag-list">
+        {d.tags.map((tag) => <li class="tag">{tag}</li>)}
+      </ul>
+
+      <div class="star">
+        <section>
+          <h2><span>S</span>{s.situation}</h2>
+          <p>{d.situation}</p>
+        </section>
+        <section>
+          <h2><span>T</span>{s.task}</h2>
+          <p>{d.task}</p>
+        </section>
+        <section>
+          <h2><span>A</span>{s.action}</h2>
+          <ul>
+            {d.action.map((a) => <li>{a}</li>)}
+          </ul>
+        </section>
+        <section class="result">
+          <h2><span>R</span>{s.result}</h2>
+          <p>{d.result}</p>
+        </section>
+      </div>
+
+      <div class="extra"><Content /></div>
+
+      <a class="btn btn--ghost" href={routeUrl('home', lang, '#projekte')}>← {s.back}</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 800px;
+  }
+  .back {
+    display: inline-block;
+    margin-bottom: 32px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .kicker {
+    display: block;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .summary {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .star {
+    margin: 48px 0;
+    display: grid;
+    gap: 16px;
+  }
+  .star section {
+    padding: 24px 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .star h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+  }
+  .star h2 span {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1b2a41;
+    color: #d1b07a;
+    font-size: 0.95rem;
+    flex: none;
+  }
+  .star p,
+  .star ul {
+    margin-bottom: 0;
+  }
+  .star li {
+    margin-bottom: 6px;
+  }
+  .result {
+    border-left: 4px solid var(--accent) !important;
+  }
+  .extra:empty {
+    display: none;
+  }
+</style>
