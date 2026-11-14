@@ -200,9 +200,18 @@ const redirect = new URL(routeUrl('thanks', lang), site).href;
     font-size: 1rem;
     color: var(--text);
     background: var(--bg);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
     transition: border-color 0.15s ease;
+  }
+  /* Inline-Prüfung: erst nach der ersten Eingabe bzw. dem Verlassen des Felds, nicht schon beim Laden */
+  input:user-invalid,
+  textarea:user-invalid {
+    border-color: var(--error);
+  }
+  input:user-valid:not([type='checkbox']),
+  textarea:user-valid {
+    border-color: var(--success);
   }
   textarea {
     resize: vertical;

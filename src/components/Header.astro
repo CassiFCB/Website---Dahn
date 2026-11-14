@@ -46,6 +46,14 @@ const items = nav.map((item) => ({
 </header>
 
 <script>
+  /* Trennlinie unter der Kopfleiste nur, wenn Inhalt darunter liegt (statt einer festen Linie) */
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 4);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const menu = document.getElementById('site-menu');
   if (toggle && menu) {
@@ -73,9 +81,33 @@ const items = nav.map((item) => ({
     top: 0;
     z-index: 50;
     background: var(--header-bg);
-    backdrop-filter: saturate(160%) blur(10px);
-    -webkit-backdrop-filter: saturate(160%) blur(10px);
-    border-bottom: 1px solid var(--border);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid transparent;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .site-header.scrolled {
+    border-bottom-color: color-mix(in srgb, var(--border) 70%, transparent);
+    box-shadow: 0 8px 24px -16px rgba(23, 20, 15, 0.35);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .site-header {
+      background: var(--bg);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+  @media (prefers-contrast: more) {
+    .site-header {
+      background: var(--bg);
+      border-bottom-color: var(--ink);
+    }
+  }
+  .menu a:active,
+  .menu-toggle:active {
+    transform: scale(0.97);
   }
   .bar {
     display: flex;
@@ -193,8 +225,9 @@ const items = nav.map((item) => ({
     .menu-toggle[aria-expanded='true'] .menu-icon::after {
       transform: translateY(-6px) rotate(-45deg);
     }
+    /* Menü wächst aus dem Menü-Knopf (oben rechts) heraus und verschwindet auf demselben Weg */
     .menu {
-      display: none;
+      display: flex;
       position: absolute;
       top: 68px;
       left: 0;
@@ -205,10 +238,26 @@ const items = nav.map((item) => ({
       padding: 8px var(--gutter) 20px;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      box-shadow: 0 16px 32px -20px rgba(23, 20, 15, 0.4);
+      transform-origin: top right;
+      opacity: 0;
+      transform: scale(0.96) translateY(-6px);
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity 0.2s ease,
+        transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+        visibility 0s linear 0.25s;
     }
     .menu.open {
-      display: flex;
+      opacity: 1;
+      transform: none;
+      visibility: visible;
+      pointer-events: auto;
+      transition:
+        opacity 0.2s ease,
+        transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+        visibility 0s;
     }
     .menu a {
       display: flex;

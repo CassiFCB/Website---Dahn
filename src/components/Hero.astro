@@ -230,6 +230,13 @@ const [first, ...rest] = profile.name.split(' ');
       animation-delay: 0.1s;
     }
   }
+  /* Bei reduzierter Bewegung: nur eine kurze Überblendung statt Aufsteigen */
+  @media (prefers-reduced-motion: reduce) {
+    .copy > *,
+    .photo-wrap {
+      animation: fade 0.2s ease both !important;
+    }
+  }
   @keyframes rise {
     from {
       opacity: 0;

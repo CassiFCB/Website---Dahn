@@ -72,6 +72,7 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Weniger Bewegung heißt nicht kein Feedback: Bewegungen weg, sanfte Überblendungen bleiben */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -79,8 +80,16 @@ html {
   *,
   *::before,
   *::after {
-    transition: none !important;
     animation: none !important;
+    transition-property: opacity, color, background-color, border-color !important;
+  }
+  .btn:active {
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
   }
 }
 
@@ -115,25 +124,34 @@ h4 {
   text-wrap: balance;
 }
 
+/* Laufweite je Größe (Apple-Prinzip): große Schrift enger, kleine Schrift leicht weiter, Fließtext neutral */
 h1,
 h2 {
   text-transform: uppercase;
-  letter-spacing: -0.01em;
 }
 h1 {
   font-size: clamp(3.2rem, 10vw, 7.5rem);
   font-weight: 900;
   font-stretch: 62%;
   line-height: 0.88;
+  letter-spacing: -0.02em;
 }
 h2 {
   font-size: clamp(2.4rem, 6vw, 4rem);
   font-stretch: 65%;
   line-height: 0.95;
+  letter-spacing: -0.015em;
 }
 h3 {
   font-size: 1.35rem;
   font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+small,
+.tag,
+.label {
+  letter-spacing: 0.01em;
 }
 
 p {
@@ -254,8 +272,10 @@ ul {
     border-color 0.15s ease,
     transform 0.15s ease;
 }
+/* Feedback sofort beim Drücken, nicht erst beim Loslassen */
 .btn:active {
-  transform: translateY(1px);
+  transform: scale(0.97);
+  transition-duration: 0.1s;
 }
 .btn--primary {
   background: var(--accent);
