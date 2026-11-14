@@ -55,23 +55,6 @@ const items = await getLocalized('education', lang);
         </dl>
       </div>
       <div>
-        <h3>{p.engagementTitle}</h3>
-        <ul class="plain">
-          {
-            p.engagement.map((e) => (
-              <li>
-                <strong>{e.role}</strong>
-                <span class="muted">
-                  {e.org} · {e.period}
-                </span>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-      <div>
-        <h3>{p.interestsTitle}</h3>
-        <p>{p.interests}</p>
         <h3>{p.otherTitle}</h3>
         <ul class="plain">
           {p.other.map((o) => <li>{o}</li>)}
@@ -118,7 +101,7 @@ const items = await getLocalized('education', lang);
   }
   .personal {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 32px;
     margin-top: 16px;
   }

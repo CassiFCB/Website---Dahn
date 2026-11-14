@@ -10,21 +10,33 @@ interface Props {
 }
 const { lang } = Astro.props;
 const s = t(lang);
+const [first, ...rest] = profile.name.split(' ');
 ---
 
 <section class="hero" aria-labelledby="hero-title">
+  <!-- Basketball-Spielfeldlinien als ruhiges Hintergrundmotiv -->
+  <svg class="court" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
+    <circle cx="600" cy="300" r="180"></circle>
+    <circle cx="600" cy="300" r="60"></circle>
+    <path d="M600 0 V600"></path>
+    <path d="M330 0 A300 300 0 0 0 330 600"></path>
+  </svg>
+
   <div class="container grid">
     <div class="copy">
+      <p class="hello">{s.hero.hello}</p>
+      <h1 id="hero-title">
+        <span class="first">{first}</span>
+        <span class="last">{rest.join(' ')}</span>
+      </h1>
       <span class="kicker">{s.hero.eyebrow}</span>
-      <h1 id="hero-title">{profile.name}</h1>
       <p class="lead">{s.hero.lead}</p>
       <p class="sub">{s.hero.sub}</p>
-      <p class="availability">
-        <span class="dot" aria-hidden="true"></span>
-        {s.hero.availability}
-      </p>
       <div class="ctas">
-        <a class="btn btn--primary" href="#kontakt">{s.hero.ctaContact}</a>
+        <a class="btn btn--primary" href="#kontakt">
+          {s.hero.ctaContact}
+          <span aria-hidden="true">→</span>
+        </a>
         <a class="btn btn--ghost" href={url(profile.cvPath)} download>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -33,17 +45,22 @@ const s = t(lang);
         </a>
       </div>
     </div>
-    <div class="photo-wrap">
+
+    <figure class="photo-wrap">
       <Image
         src={portrait}
         alt={s.hero.photoAlt}
         widths={[240, 381]}
-        sizes="(max-width: 860px) 240px, 340px"
+        sizes="(max-width: 860px) 240px, 360px"
         loading="eager"
         fetchpriority="high"
         class="photo"
       />
-    </div>
+      <figcaption class="availability">
+        <span class="dot" aria-hidden="true"></span>
+        {s.hero.availability}
+      </figcaption>
+    </figure>
   </div>
 
   <div class="container">
@@ -62,100 +79,135 @@ const s = t(lang);
 
 <style>
   .hero {
-    padding-block: clamp(48px, 8vw, 96px) clamp(48px, 7vw, 80px);
-    background:
-      radial-gradient(1200px 400px at 85% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
-      var(--bg);
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(40px, 7vw, 88px) clamp(56px, 8vw, 96px);
+    background: var(--bg);
+  }
+  .court {
+    position: absolute;
+    right: -4%;
+    top: 50%;
+    width: min(70vw, 760px);
+    height: auto;
+    transform: translateY(-58%);
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    opacity: 0.16;
+    pointer-events: none;
   }
   .grid {
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: clamp(32px, 6vw, 80px);
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    align-items: end;
+    gap: clamp(32px, 6vw, 72px);
+  }
+  .hello {
+    font-weight: 700;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    margin: 0 0 0.4rem;
+    color: var(--text-muted);
   }
   h1 {
-    margin-bottom: 0.35em;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.3em;
+  }
+  .last {
+    color: var(--accent);
+  }
+  .kicker {
+    margin-top: 0.5rem;
   }
   .lead {
-    font-family: var(--font-serif);
-    font-size: clamp(1.25rem, 2.2vw, 1.55rem);
-    line-height: 1.45;
-    color: var(--navy);
-    max-width: 34ch;
+    font-size: clamp(1.2rem, 2vw, 1.45rem);
+    font-weight: 600;
+    line-height: 1.4;
+    max-width: 32ch;
+    color: var(--text);
   }
   .sub {
     color: var(--text-muted);
-    max-width: 60ch;
-  }
-  .availability {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 14px;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    font-weight: 500;
-    background: var(--surface);
-  }
-  .dot {
-    flex: none;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 20%, transparent);
+    max-width: 56ch;
   }
   .ctas {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 12px;
+    margin-top: 20px;
   }
   .photo-wrap {
     position: relative;
+    margin: 0;
+    justify-self: end;
+    width: min(100%, 360px);
   }
   .photo-wrap::before {
     content: '';
     position: absolute;
-    inset: 14px -14px -14px 14px;
-    border: 2px solid var(--accent);
+    inset: 18px -18px -18px 18px;
+    background: var(--accent);
     border-radius: var(--radius);
   }
   .photo {
     position: relative;
-    width: 340px;
+    width: 100%;
     aspect-ratio: 381 / 476;
     object-fit: cover;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+  }
+  .availability {
+    position: absolute;
+    left: -20px;
+    bottom: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    max-width: calc(100% + 10px);
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #3ddc84;
+    box-shadow: 0 0 0 4px color-mix(in srgb, #3ddc84 25%, transparent);
   }
   .stats {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
     list-style: none;
     padding: 0;
-    margin: clamp(48px, 7vw, 80px) 0 0;
-    border-top: 1px solid var(--border);
+    margin: clamp(56px, 8vw, 96px) 0 0;
+    border-top: 3px solid var(--ink);
   }
   .stats li {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 24px 20px 0 0;
+    gap: 6px;
+    padding: 22px 20px 0 0;
   }
   .stats li + li {
     padding-left: 20px;
-    border-left: 1px solid var(--border);
+    border-left: 1.5px solid var(--border);
   }
   .value {
-    font-family: var(--font-serif);
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: var(--navy);
-    line-height: 1.1;
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 3.6rem);
+    font-weight: 900;
+    font-stretch: 62%;
+    color: var(--ink);
+    line-height: 1;
   }
   .label {
     font-size: 0.9rem;
@@ -163,29 +215,68 @@ const s = t(lang);
     line-height: 1.4;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .copy > *,
+    .photo-wrap {
+      animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+    .copy > :nth-child(2) {
+      animation-delay: 0.06s;
+    }
+    .copy > :nth-child(n + 3) {
+      animation-delay: 0.14s;
+    }
+    .photo-wrap {
+      animation-delay: 0.1s;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
   @media (max-width: 860px) {
     .grid {
       grid-template-columns: 1fr;
+      align-items: start;
     }
     .photo-wrap {
       order: -1;
       justify-self: start;
+      width: 210px;
+      margin-bottom: 8px;
     }
-    .photo {
-      width: 200px;
+    .photo-wrap::before {
+      inset: 12px -12px auto 12px;
+      aspect-ratio: 381 / 476;
+    }
+    .availability {
+      position: relative;
+      left: auto;
+      bottom: auto;
+      margin-top: 28px;
+      width: max-content;
+      max-width: calc(100vw - 2 * var(--gutter));
+    }
+    .court {
+      width: 120vw;
+      right: -60%;
+      top: 22%;
     }
     .stats {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .stats li,
     .stats li + li {
-      padding: 20px 12px 20px 0;
+      padding: 18px 12px 18px 0;
       border-left: 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1.5px solid var(--border);
     }
     .stats li:nth-child(even) {
       padding-left: 16px;
-      border-left: 1px solid var(--border);
+      border-left: 1.5px solid var(--border);
     }
   }
 </style>

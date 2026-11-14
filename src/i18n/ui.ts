@@ -15,6 +15,7 @@ export const ui = {
     menu: 'Menü',
     langSwitch: 'Switch to English',
     hero: {
+      hello: 'Hi, ich bin',
       eyebrow: 'International Business (B.A.)',
       lead: 'Ich verbinde Marketing- und Vertriebsdenken mit sauberer operativer Umsetzung – zahlenaffin, hands-on und international erprobt.',
       sub: 'Praxis im FMCG Key Account Management (InComm, Spanien) und in Digitalprojekten (Europa-Park). Mein Ziel: der Einstieg in Marketing, Brand Management, Einkauf oder Vertrieb.',
@@ -86,6 +87,7 @@ export const ui = {
       result: 'Ergebnis',
     },
     education: { title: 'Ausbildung', kicker: 'Studium & Schule' },
+    offcourt: { kicker: 'Persönlich', title: 'Abseits vom Job' },
     personal: {
       title: 'Persönliches',
       languagesTitle: 'Sprachen',
@@ -163,6 +165,7 @@ export const ui = {
     menu: 'Menu',
     langSwitch: 'Auf Deutsch wechseln',
     hero: {
+      hello: "Hi, I'm",
       eyebrow: 'International Business (B.A.)',
       lead: 'I combine a marketing and sales mindset with reliable operational execution – numbers-driven, hands-on and proven in international teams.',
       sub: 'Experience in FMCG key account management (InComm, Spain) and digital projects (Europa-Park, Germany). My goal: an entry-level role in marketing, brand management, procurement or sales.',
@@ -234,6 +237,7 @@ export const ui = {
       result: 'Result',
     },
     education: { title: 'Education', kicker: 'University & school' },
+    offcourt: { kicker: 'Personal', title: 'Off the clock' },
     personal: {
       title: 'Personal',
       languagesTitle: 'Languages',

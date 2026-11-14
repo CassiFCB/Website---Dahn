@@ -2,52 +2,58 @@
    Design-Tokens – Farben und Abstände zentral anpassen
    ========================================================================== */
 :root {
-  --navy: #1b2a41;
-  --navy-700: #24385a;
-  --accent: #b08d57; /* dezentes Gold */
-  --accent-strong: #8a6a3b;
+  /* Sportlich-warm: Cremeweiß, Tinte, Basketball-Orange.
+     --navy ist historisch der Name für die Überschriftenfarbe und bleibt deshalb bestehen. */
+  --ink: #17140f;
+  --navy: var(--ink);
+  --navy-700: #2b261e;
+  --accent: #ec5b13; /* Basketball-Orange: Flächen, Linien, große Schrift */
+  --accent-strong: #b03f04; /* für kleinen Text auf Creme (Kontrast AA) */
+  --on-accent: #17140f;
 
-  --bg: #ffffff;
-  --bg-soft: #f5f6f8;
-  --surface: #ffffff;
-  --text: #1b2a41;
-  --text-muted: #55606f;
-  --border: #e2e5ea;
-  --link: #24385a;
-  --focus: #b08d57;
+  --bg: #f6f1e7;
+  --bg-soft: #efe7d8;
+  --surface: #fbf8f2;
+  --text: #17140f;
+  --text-muted: #5b5449;
+  --border: #ddd2bf;
+  --link: #17140f;
+  --focus: #ec5b13;
   --success: #1f6f4a;
   --error: #a3312a;
-  --header-bg: rgba(255, 255, 255, 0.88);
+  --header-bg: rgba(246, 241, 231, 0.9);
 
-  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Archivo Variable', 'Arial Narrow', system-ui, sans-serif;
+  /* früher Serif; zeigt jetzt auf die Display-Schrift, damit alte Verweise mitziehen */
+  --font-serif: var(--font-display);
 
-  --radius: 10px;
+  --radius: 4px;
   --radius-sm: 6px;
-  --shadow: 0 1px 2px rgba(27, 42, 65, 0.06), 0 8px 24px rgba(27, 42, 65, 0.06);
-  --max: 1120px;
+  --shadow: none;
+  --max: 1160px;
   --gutter: clamp(16px, 4vw, 32px);
-  --section: clamp(64px, 10vw, 112px);
+  --section: clamp(72px, 11vw, 128px);
 
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1724;
-    --bg-soft: #141e2e;
-    --surface: #18243a;
-    --text: #e8ecf2;
-    --text-muted: #a5afbe;
-    --border: #2a3850;
-    --link: #d9bf8f;
-    --accent: #d1b07a;
-    --accent-strong: #e2c896;
-    --navy: #e8ecf2;
+    --ink: #f4eee3;
+    --navy-700: #e6dfd2;
+    --bg: #14120e;
+    --bg-soft: #1c1913;
+    --surface: #211d17;
+    --text: #f4eee3;
+    --text-muted: #b5ac9c;
+    --border: #3a342a;
+    --link: #f4eee3;
+    --accent: #ff7a33;
+    --accent-strong: #ff9a5c;
     --success: #6fd19f;
     --error: #ff8f86;
-    --header-bg: rgba(15, 23, 36, 0.86);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+    --header-bg: rgba(20, 18, 14, 0.88);
   }
 }
 
@@ -100,23 +106,34 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 80%;
+  line-height: 1.05;
   color: var(--navy);
   margin: 0 0 0.5em;
   text-wrap: balance;
 }
 
-h1 {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+h1,
+h2 {
+  text-transform: uppercase;
   letter-spacing: -0.01em;
 }
+h1 {
+  font-size: clamp(3.2rem, 10vw, 7.5rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 0.88;
+}
 h2 {
-  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-stretch: 65%;
+  line-height: 0.95;
 }
 h3 {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
+  font-weight: 750;
 }
 
 p {
@@ -158,14 +175,23 @@ ul {
 }
 
 .kicker {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--font-sans);
   font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent-strong);
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+.kicker::before {
+  content: '';
+  width: 28px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
 }
 
 .section-head {
@@ -215,7 +241,7 @@ ul {
   gap: 0.5em;
   min-height: 48px;
   padding: 0.7em 1.4em;
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   border: 1px solid transparent;
   font: inherit;
   font-size: 0.98rem;
@@ -232,31 +258,21 @@ ul {
   transform: translateY(1px);
 }
 .btn--primary {
-  background: #1b2a41;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 .btn--primary:hover {
-  background: #24385a;
-  color: #fff;
+  background: var(--ink);
+  color: var(--bg);
 }
 .btn--ghost {
-  border-color: var(--border);
+  border: 2px solid var(--ink);
   color: var(--text);
   background: transparent;
 }
 .btn--ghost:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
-@media (prefers-color-scheme: dark) {
-  .btn--primary {
-    background: var(--accent);
-    color: #0f1724;
-  }
-  .btn--primary:hover {
-    background: var(--accent-strong);
-    color: #0f1724;
-  }
+  background: var(--ink);
+  color: var(--bg);
 }
 
 .tag-list {
@@ -269,18 +285,18 @@ ul {
 }
 .tag {
   font-size: 0.8rem;
-  padding: 4px 10px;
+  font-weight: 600;
+  padding: 4px 12px;
   border-radius: 999px;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1.5px solid var(--border);
   color: var(--text-muted);
 }
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
 }
 
 /* Fließtext-Seiten (Impressum, Datenschutz) */
