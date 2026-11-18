@@ -24,7 +24,7 @@ export const profile = {
    * (dort die eigene E-Mail-Adresse eintragen, Key kommt per Mail).
    * Der Key ist öffentlich unbedenklich – er erlaubt nur die Zustellung an diese Adresse.
    */
-  web3formsKey: '[[PLATZHALTER: WEB3FORMS_KEY]]',
+  web3formsKey: '9ab205bc-d08f-4285-bb1a-6091b838a68b',
 } as const;
 
 export const isFormConfigured = !profile.web3formsKey.startsWith('[[');
