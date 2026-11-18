@@ -5,7 +5,7 @@
  */
 export const profile = {
   name: 'Cassian Dahn',
-  email: 'dahn_cassian@yahoo.de',
+  email: 'mail@cassiandahn.com',
   linkedin: 'https://www.linkedin.com/in/cassian-dahn/',
   location: 'Walzbachtal',
   country: { de: 'Deutschland', en: 'Germany' },
